@@ -1,0 +1,273 @@
+this, this in functions, this inside inner function, this inside 
+        constructor, this inside class
+
+2)
+            this.table = "window table";
+
+            this.garage = {
+            table: "garage table",
+            cleanTable() {
+                console.log(`cleaning ${this.table}`);
+            },
+            };
+            let johnsonRoom = {
+            table: "johnson table",
+            cleanTable() {
+                console.log(`cleaning ${this.table}`);
+            },
+            };
+            johnsonRoom.cleanTable();
+            this.garage.cleanTable();
+
+
+
+
+            // this in functions
+
+            ("use strict");
+
+            this.table = "window table";
+
+            const cleanTable = function (soap) {
+            console.log(`cleaning ${this.table} using ${soap}`);
+            };
+
+            this.garage = {
+            table: "garage table",
+            };
+
+            let johnsonRoom = {
+            table: "johnson table",
+            };
+
+            cleanTable.call(this, "using some soap");
+            cleanTable.call(this.garage, "using some soap");
+            cleanTable.call(johnsonRoom, "using some soap");
+
+
+
+
+            //this inside inner function
+            ("use strict");
+
+            this.table = "window table";
+
+            const cleanTable = function (soap) {
+            const innerFunction = (_soap) => {
+                console.log(`cleaning ${this.table} using ${_soap}`);
+            };
+            innerFunction(soap);
+            };
+
+            this.garage = {
+            table: "garage table",
+            };
+
+            let johnsonRoom = {
+            table: "johnson table",
+            };
+
+            cleanTable.call(this, "using some soap");
+            cleanTable.call(this.garage, "using some soap");
+            cleanTable.call(johnsonRoom, "using some soap");
+
+
+
+                //this inside constructor
+                "use strict";
+
+                this.table = "window table";
+
+                this.garage = {
+                    table: "garage table",
+                };
+
+                const createRoom = function (name) {
+                    this.table = `${name}s table`;
+                };
+
+                createRoom.prototype.cleanTable = function (soap) {
+                    console.log(`cleaning ${this.table} using ${soap}`);
+                };
+
+                const jillsRoom = new createRoom("Jill");
+                const johnsRoom = new createRoom("John");
+                jillsRoom.cleanTable("some soap");
+                johnsRoom.cleanTable("some soap");
+
+
+                //this inside class
+                "use strict";
+
+                this.table = "window table";
+
+                this.garage = {
+                    table: "garage table",
+                };
+
+                this.garage = {
+                    table: "garage table",
+                };
+
+                class createRoom {
+                    constructor(name){
+                        this.table = `${name}s table`;
+                    }
+                    cleanTable(soap) {
+                        console.log(`cleaning ${this.table} using ${soap}`);
+                    };
+                };
+
+                const jillsRoom = new createRoom("Jill");
+                const johnsRoom = new createRoom("John");
+                jillsRoom.cleanTable("some soap");
+                johnsRoom.cleanTable("some soap");
+
+3)
+
+            class Student {
+                constructor(name, age, phone,marks) {
+                this.name = name;
+                this.age = age;
+                this.phone = phone;
+                this.marks = marks;
+                }
+            }
+
+
+4)
+            class Student {
+                constructor(name, age, phone,marks) {
+                    this.name = name;
+                    this.age = age;
+                    this.phone = phone;
+                    this.marks = marks;
+                }
+
+            eligible() {
+                if(this.marks > 40){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        var st1 = new Student('Neetu',25,889789,45);
+
+        console.log(st1.eligible()?"Is eligible":"Not eligible");
+
+5)
+        class Student {
+            constructor(name, age, phone,marks) {
+            this.name = name;
+            this.age = age;
+            this.phone = phone;
+            this.marks = marks;
+        }
+
+        eligible() {
+            if(this.marks > 40){
+                return true;
+            }else{
+                return false;
+            }
+        }
+         }
+
+            var st1 = new Student('Neetu',25,889784369,56);
+            var st2 = new Student('vicky',35,889784569,34);
+            var st3 = new Student('ritu',23,889746389,20);
+            var st4 = new Student('Ram',20,889546789,66);
+            var st5 = new Student('sham',27,8546789,51);
+
+
+
+            console.log(st1.eligible()?"Is eligible":"Not eligible");
+            console.log(st2.eligible()?"Is eligible":"Not eligible");
+            console.log(st3.eligible()?"Is eligible":"Not eligible");
+            console.log(st4.eligible()?"Is eligible":"Not eligible");
+            console.log(st5.eligible()?"Is eligible":"Not eligible");
+
+6)
+
+        class Student {
+            static count = 0;
+            constructor(name, age, phone, marks) {
+                this.name = name;
+                this.age = age;
+                this.phone = phone;
+                this.marks = marks;
+                Student.countStudent();
+            }
+            static countStudent() {
+                return Student.count++;
+            }
+
+            eligible() {
+                if (this.marks > 40) {
+                return true;
+                } else {
+                return false;
+                }
+            }
+            }
+
+            var st1 = new Student("Neetu", 25, 889784369, 56);
+            var st2 = new Student("vicky", 35, 889784569, 34);
+            var st3 = new Student("ritu", 23, 889746389, 20);
+            var st4 = new Student("Ram", 20, 889546789, 66);
+            var st5 = new Student("sham", 27, 8546789, 51);
+
+            console.log(Student.countStudent());
+
+            console.log(st1.eligible() ? "Is eligible" : "Not eligible");
+            console.log(st2.eligible() ? "Is eligible" : "Not eligible");
+            console.log(st3.eligible() ? "Is eligible" : "Not eligible");
+            console.log(st4.eligible() ? "Is eligible" : "Not eligible");
+            console.log(st5.eligible() ? "Is eligible" : "Not eligible");
+
+
+
+
+
+1)
+            let getA = a => a;
+            console.log(getA(1));
+
+            let square = a => a*a;
+            console.log(square(2));
+
+            let mult = (a,b) => { return a*b};
+            console.log(mult(2,4));
+
+            var x = function(){
+                this.val = 1;
+                setTimeout(function(){
+                    this.val++;
+                    console.log(this.val)
+                },1)
+            };
+
+
+2)        class Student {
+
+            constructor(name, age, marks) {
+                this.name = name;
+                this.age = age;
+                this.marks = marks;
+            }
+            setPlacementAge(minimumPlacementAge){
+                    return (minMarks) => {
+                        if(this.marks > minMarks && this.age > minimumPlacementAge){
+                            console.log(this.name+" is eligible for placements ")
+                        }else{
+                            console.log(this.name+" is not eligible for placements ")
+                        }
+                    }
+            }
+
+            }
+
+            const st1 = new Student('joy',25,45);
+            st1.setPlacementAge(18,40);
