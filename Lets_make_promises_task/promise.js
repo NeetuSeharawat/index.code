@@ -40,7 +40,7 @@ const posts = [
     });
   }
   
-  updateLastActivityTime = {
+  function updateLastActivityTime(){
       return new Promise((resolve, reject) => {
           setTimeout(() => {
               posts.lastActivityTime = new Date().getTime();
@@ -49,7 +49,7 @@ const posts = [
       })
   }
   
-  updatePost(){
+  function updatePost(){
       Promise.all([createPost,lastActivityTime])
       .then(([createPostresolves,updateLastActivityTimeresolves])=>{
           console.log(updateLastActivityTimeresolves);

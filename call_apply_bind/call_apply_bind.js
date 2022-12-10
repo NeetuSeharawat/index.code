@@ -1,4 +1,4 @@
-1)	    var obj = {
+    var obj = {
 
 	   		 num:2,
 
@@ -11,7 +11,7 @@
 	   	  }
  	 	  console.log(addToThis.call(obj,3))
 
-2)     var obj = {
+    var obj = {
 
 		    num:2,
 
@@ -26,8 +26,7 @@
 		   arr=[2,4,6];
 
 		  console.log(addToThis.apply(obj,arr))
-
-3)		var obj = {
+		var obj = {
 
 		    num:2,
 
@@ -43,7 +42,6 @@
 
 	   console.log(bound(1,2,3))
 
-4)
 	  const student = {
 
 	        age:20,
