@@ -87,7 +87,7 @@ header {
   </head>
   <body>
     <header>
-      <h1>JS For Beginners</h1>
+      <h1>Booking Appointment App</h1>
     </header>
 
     <section class="container">
@@ -101,6 +101,10 @@ header {
         <div>
           <label for="email">Email:</label>
           <input type="text" id="email">
+        </div> 
+        <div>
+          <label for="phone_no">Phone_no:</label>
+          <input type="text" id="phone_no">
         </div>
         <input class="btn" type="submit" value="Submit">
       </form>
@@ -120,9 +124,12 @@ header {
         btn.addEventListener('click',(e)=>{
             e.preventDefault();
             var name = document.getElementById('name').value;
-            var email = document.getElementById('email').value
+            var email = document.getElementById('email').value;
+            var phone_no = document.getElementById('phone_no').value;
             localStorage.setItem("name",name);
             localStorage.setItem("email",email);
+            localStorage.setItem("phone_no",phone_no);
+
         });
 
 
