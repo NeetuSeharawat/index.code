@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Save to Crud Crud (GET_Request)</title>
+
+</head>
+
+<body>
+  <header>
+    <h1>Booking Appointment App</h1>
+  </header>
+
+  <section class="container">
+    <form id="my-form">
+      <h1>Add User</h1>
+      <div class="msg"></div>
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name">
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email">
+      </div>
+      <div>
+        <label for="phone_no">Phone_no:</label>
+        <input type="text" id="phone_no">
+      </div>
+      <input class="btn" type="submit" value="Submit">
+    </form>
+
+    <ul id="users"></ul>
+
+    <!-- <ul class="items">
+            <li class="item">Item 1</li>
+            <li class="item">Item 2</li>
+            <li class="item">Item 3</li>
+          </ul> -->
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+  <script>
+    var crudcrud_Url = "https://crudcrud.com/api/56b25c283c1b4701a3966aa119c70de3"
+    const btn = document.querySelector('.btn');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      var name = document.getElementById('name').value;
+      var email = document.getElementById('email').value;
+      var phone_no = document.getElementById('phone_no').value;
+      // localStorage.setItem("name",name);
+      // localStorage.setItem("email",email);
+      // localStorage.setItem("phone_no",phone_no);
+
+      const obj = {
+        name,
+        email,
+        phonenumber,
+      }
+      axios.post(crudcrud_Url+ "/AppointmentData", obj)
+        .then((response) => {
+          showNewUserOnScreen(response.data)
+          // console.log(response)
+        })
+        .catch((err) => {
+          document.body.innerHTML = document.body.innerHTML + "<h4> Something went wrong </h4>"
+          console.log(err)
+        })
+    })
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+      axios.get(crudcrud_Url +"/AppointmentData")
+        .then((reponse) => {
+          console.log(reponse)
+
+          for (var i = 0; i < response.data.length; i++) {
+            showNewUserOnScreen(response.data[i])
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+
+        })
+    })
+    //     const localStorageObj = localStorage;
+    //   const localstoragekeys = Object.keys(localStorageObj)
+
+    //   for(var i=0; i<localstoragekeys.length; i++ ){
+    //     const key = localstoragekeys[i]
+    //     const userDetailsString =localstorageobj[keys];
+    //     const userDetailsobj =JSON.parse(userDetailsString);
+    //     showNewUserOnScreen(userDetailsobj)
+    //   }
+    // })
+
+    function showNewUserOnScreen(user) {
+      document.getElementById('Name').value = '';
+      document.getElementById('Email').value = '';
+      document.getElementById('Phone_no').value = '';
+
+      //  console.log(localstorage.getItem(user.emailId))
+      if (localStorage.getItem(user.email) != null) {
+        removeUserFromScreen(user.email)
+      }
+
+    for (var i = 0; i < reponse.data.length; i++) {
+      let tempOb = reponse.data[i];
+      console.log(tempOb)
+      var li = document.createElement('li');
+      li.className = 'list-group-item';
+      li.appendChild(document.createTextNode(tempOb.name + "  ,  " + tempOb.email));
+    }
+
+  
+    var editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-primary btn-sm float-right ';
+    editBtn.appendChild(document.createTextNode('Y'));
+    li.appendChild(editBtn);
+    itemList.appendChild(li)
+
+    var deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
+    deleteBtn.appendChild(document.createTextNode('X'));
+    li.appendChild(deleteBtn);
+    itemList.appendChild(li)
+
+
+    //   .then(error=>console.log(error))
+
+  }
+    function addItem(e) {
+      e.preventDefault();
+      var name = e.target.name.value;
+      var email = e.target.email.value;
+      let obj = {
+        name,
+        email
+      }
+      // localStorage.setItem(obj.email,JSON.stringify(obj));
+      axios.post("https://crudcrud.com/api/9e9234e200dd4d8da7193084436178b8/UserDb", obj)
+        .then(data => console.log(data))
+        .then(error => console.log(error))
+
+
+      for (var i = 0; i < localStorage.length; i++) {
+        let tempOb = JSON.parse(localStorage.getItem(localStorage.key(i)));
+        var li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.appendChild(document.createTextNode(tempOb.name + "  ,  " + tempOb.email));
+      }
+
+
+
+      var editBtn = document.createElement('button');
+      editBtn.className = 'btn btn-primary btn-sm float-right ';
+      editBtn.appendChild(document.createTextNode('Y'));
+      li.appendChild(editBtn);
+      itemList.appendChild(li)
+
+      var deleteBtn = document.createElement('button');
+      deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
+      deleteBtn.appendChild(document.createTextNode('X'));
+      li.appendChild(deleteBtn);
+      itemList.appendChild(li)
+    }
+
+    function removeItem(e) {
+      if (e.target.classList.contains('delete')) {
+        if (confirm('Are You Sure?')) {
+          var li = e.target.parentElement;
+          itemList.removeChild(li);
+        }
+      }
+    }
+
+
+    function filterItems(e) {
+
+      var text = e.target.value.toLowerCase();
+
+      var items = itemList.getElementsByTagName('li');
+
+      Array.from(items).forEach(function (item) {
+        var itemName = item.firstChild.textContent;
+        if (itemName.toLowerCase().indexOf(text) != -1) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+</body>
+
+</html>
