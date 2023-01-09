@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><b>JS_3Hours_Project(Restaurant)</b></title>
+  </head>
+  <body bgcolor="olive">
+    <table class="table">
+
+          <form onsubmit="saveData(event);">
+            <h1><b>Biriyani House </b></h1>
+            <h2>Food Orders</h2>
+          <br/>
+            <div class="form-group">
+                <label>Choose A Table</label>
+                <select
+                  name="ChoosetableDetails"
+                  id="ChoosetableDetails"
+                  class="form-control"
+                >
+                  <option value="table1">Table1</option>
+                  <option value="table2">Table2</option>
+                  <option value="table3">Table3</option>  
+                </select>
+              </div>
+
+            <div class="form-group">
+              <label>Dish Name:</label>
+              <input
+                type="text"
+                name="DishDetails"
+                id="DishDetails"
+                maxlength="30"
+                class="form-control"
+              />
+            </div>
+           
+            <div class="form-group">
+                <label>Price</label>
+                <input
+                  type="text"
+                  name="PriceDetails"
+                  id="PriceDetails"
+                  class="form-control"
+                />
+              </div>
+
+            <div class="form-action-buttons">
+              <input type="submit" value="Add to bill" class="btn btn-info" />
+            </div>
+          </form>
+        </br>
+          <h2><b>Orders</b></h2>
+          <p id="displayError" class="validation-error"></p>
+          <!-- <ul id="users" class="list-group"></ul> -->
+        <h3>Table 1</h3>
+         <ul id="table1List" class="tableList-group"></ul>
+         <br>
+        <h3>Table 2</h3>
+         <ul id="table2List" class="tableList-group"></ul>
+         <br>
+        <h3>Table 3</h3>
+         <ul id="table3List" class="tableList-group"></ul>
+           <!-- <ul id="table2" class="table2list-group"></ul>
+          <ul id="table3" class="table3list-group"></ul> -->
+
+    </table>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", getList);
+
+      let PriceDetails = document.getElementById("PriceDetails");
+      let DishDetails = document.getElementById("DishDetails");
+    
+   
+      
+
+      //  let table1List = document.getElementById("table1list");
+      //  let table2List = document.getElementById("table3list");
+      //  let table3List = document.getElementById("table3list");
+
+      async function saveData(e) {
+        try {
+          e.preventDefault();
+          const Price = e.target.PriceDetails.value;
+          const Dish = e.target.DishDetails.value;
+          const Choosetable = e.target.ChoosetableDetails.value;
+          if (Price == "" || Dish == "" || Choosetable == "")
+            throw "Input field must not be empty";
+          if (isNaN(Price)) throw "Price field must be a number";
+          const obj = {
+            Price,
+            Dish,
+            Choosetable,
+          };
+          console.log(obj);
+          const response = await axios.post(
+            "https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price",
+            obj
+          );
+          console.log(response.data);
+          if (response.status === 201) {
+            displayListOnScreen(response.data);
+            resetForm();
+          } else {
+            throw new Error("Failed To create new Price");
+          }
+        } catch (error) {
+          showError(error);
+        }
+      }
+
+      //window.addEventListener("load", getList);
+
+      let table1 = document.getElementById("table1List");
+      let table2 = document.getElementById("table2List");
+      let table3 = document.getElementById("table3List");
+
+      function displayListOnScreen(table) {
+        
+        // const parentNode = tableList;
+        const PriceElemId = `Price-${table._id}`;
+        // const li = document.createElement('li')
+        // li.innerHTML=`<li id=${PriceElemId} class="list-group-item"> <span class="font-style">${table.Price}</span> - <span class="crimson-text">${table.Dish}</span>
+        //   <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${table._id}')> Delete </button>
+        //                       <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${table._id}','${table.Dish}','${table.Price}','${table.Choosetable}')>Edit</button>
+        //                    </li>`;
+        const childHTML = `<li id=${PriceElemId} class="list-group-item"> <span class="font-style">${table.Price}</span> - <span class="crimson-text">${table.Dish}</span>
+          <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${table._id}')> Delete </button>
+                              <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${table._id}','${table.Dish}','${table.Price}','${table.Choosetable}')>Edit</button>
+                           </li>`;
+          if(table.Choosetable=='table1'){
+            table1.innerHTML = table1.innerHTML + childHTML
+          }
+          else if(table.Choosetable=='table2'){
+            table2.innerHTML = table2.innerHTML + childHTML
+          }else if(table.Choosetable=='table3'){
+            table3.innerHTML = table3.innerHTML + childHTML
+          }
+      
+      //  tableList.innerHtml =tableList.innerHtml + childHTML;
+
+        //parentNode.innerHTML = parentNode.innerHTML + childHTML;
+        // console.log(tableList); 
+      }
+      
+      //Edit
+
+      async function editList(Priceid, Dish, Price, Choosetable) {
+        try {
+          PriceDetails.value = Price;
+          DishDetails.value = Dish;
+          ChoosetableDetails.value = Choosetable;
+
+          const response = await axios.delete(
+            `https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price/${Priceid}`
+          );
+          if (response.status === 200) {
+            removeListFromScreen(Priceid);
+          } else {
+            throw new Error("Failed to delete");
+          }
+        } catch (error) {
+          showError(error);
+        }
+      }
+
+      // Delete
+      async function deleteList(Priceid) {
+        try {
+          if (confirm("Are you sure to delete this record ?")) {
+            const response = await axios.delete(
+              `https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price/${Priceid}`
+            );
+            if (response.status === 200) {
+              removeListFromScreen(Priceid);
+            } else {
+              throw new Error("Failed to delete");
+            }
+          } else {
+            throw new Error("Error");
+          }
+        } catch (error) {
+          showError(error);
+        }
+      }
+
+      function showError(err) {
+        document.getElementById("displayError").innerHTML = err;
+      }
+
+      function removeListFromScreen(Priceid) {
+        const PriceElemId = `Price-${Priceid}`;
+        document.getElementById(PriceElemId).remove();
+      }
+
+      function resetForm() {
+        PriceDetails.value = "";
+        DishDetails.value = "";
+        ChoosetableDetails.value = "";
+        PriceDetails.focus();
+      }
+
+      async function getList() {
+        try {
+          const response = await axios.get(
+            "https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price"
+          );
+          console.log(response);
+          if (response.status === 200) {
+           
+            // table1List.innerHTML = "";
+            // table2List.innerHTML = "";
+            // table3List.innerHTML = "";
+            resetForm();
+            response.data.forEach((Price) => {
+              displayListOnScreen(Price);
+            });
+          } else {
+            throw new Error("Oops! something went wrong");
+          }
+        } catch (error) {
+          showError(error);
+        }
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+  </body>
+</html>
