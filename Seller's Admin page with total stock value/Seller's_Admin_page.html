@@ -112,8 +112,7 @@
     // Display 
       function displayListOnScreen(user) {
         const parentNode = usersList;
-      
-       // const SPriceElemId = user._id;
+    
         const childHTML = `<li id=${user._id} class="list-group-item"> <span class="font-style">${user.SPrice}</span> - <span class="crimson-text">${user.Pname}</span>
                               <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${user._id}','${user.SPrice}')> Delete </button>
                               <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${user._id}','${user.Pname}','${user.SPrice}')>Edit</button>
@@ -122,11 +121,7 @@
         parentNode.innerHTML = parentNode.innerHTML + childHTML;
 
        // total of all products value 
-       updateTotalValue()
-        // totalValue += parseInt(user.SPrice);
-        // let productList = document.getElementById("Totalvalue");
-        // productList.innerHTML = `<p>${totalValue}</p>`;
-        //  console.log(totalValue); 
+       updateTotalValue() 
       }
 
       async function updateTotalValue(){
@@ -173,10 +168,7 @@
             );
             if (response.status === 200) {
               removeListFromScreen(SPriceid);
-        // totalValue = totalValue - parseInt(Price);
-        // let productList = document.getElementById("Totalvalue");
-        // productList.innerHTML = `<p>${totalValue}</p>`;
-        //  console.log(totalValue);
+        
             } else {
               throw new Error("Failed to delete");
             }
@@ -186,9 +178,6 @@
         } catch (error) {
           showError(error);
         }
-        // total of Product value After subtraction
-        
-       // console.log(Price);
       }
 
       function showError(err) {
