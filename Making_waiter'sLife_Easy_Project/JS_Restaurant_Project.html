@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><b>JS_3Hours_Project(Restaurant)</b></title>
   </head>
-  <body bgcolor="olive">
+  <body>
     <table class="table">
 
           <form onsubmit="saveData(event);">
@@ -74,13 +74,6 @@
       let PriceDetails = document.getElementById("PriceDetails");
       let DishDetails = document.getElementById("DishDetails");
     
-   
-      
-
-      //  let table1List = document.getElementById("table1list");
-      //  let table2List = document.getElementById("table3list");
-      //  let table3List = document.getElementById("table3list");
-
       async function saveData(e) {
         try {
           e.preventDefault();
@@ -97,7 +90,7 @@
           };
           console.log(obj);
           const response = await axios.post(
-            "https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price",
+            "https://crudcrud.com/api/46458f4ee2644472b0c4a7c6c21e1ef0/Price",
             obj
           );
           console.log(response.data);
@@ -112,21 +105,15 @@
         }
       }
 
-      //window.addEventListener("load", getList);
-
+      
       let table1 = document.getElementById("table1List");
       let table2 = document.getElementById("table2List");
       let table3 = document.getElementById("table3List");
 
       function displayListOnScreen(table) {
         
-        // const parentNode = tableList;
         const PriceElemId = `Price-${table._id}`;
-        // const li = document.createElement('li')
-        // li.innerHTML=`<li id=${PriceElemId} class="list-group-item"> <span class="font-style">${table.Price}</span> - <span class="crimson-text">${table.Dish}</span>
-        //   <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${table._id}')> Delete </button>
-        //                       <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${table._id}','${table.Dish}','${table.Price}','${table.Choosetable}')>Edit</button>
-        //                    </li>`;
+       
         const childHTML = `<li id=${PriceElemId} class="list-group-item"> <span class="font-style">${table.Price}</span> - <span class="crimson-text">${table.Dish}</span>
           <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${table._id}')> Delete </button>
                               <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${table._id}','${table.Dish}','${table.Price}','${table.Choosetable}')>Edit</button>
@@ -140,10 +127,6 @@
             table3.innerHTML = table3.innerHTML + childHTML
           }
       
-      //  tableList.innerHtml =tableList.innerHtml + childHTML;
-
-        //parentNode.innerHTML = parentNode.innerHTML + childHTML;
-        // console.log(tableList); 
       }
       
       //Edit
@@ -155,7 +138,7 @@
           ChoosetableDetails.value = Choosetable;
 
           const response = await axios.delete(
-            `https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price/${Priceid}`
+            `https://crudcrud.com/api/46458f4ee2644472b0c4a7c6c21e1ef0/Price/${Priceid}`
           );
           if (response.status === 200) {
             removeListFromScreen(Priceid);
@@ -172,7 +155,7 @@
         try {
           if (confirm("Are you sure to delete this record ?")) {
             const response = await axios.delete(
-              `https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price/${Priceid}`
+              `https://crudcrud.com/api/46458f4ee2644472b0c4a7c6c21e1ef0/Price/${Priceid}`
             );
             if (response.status === 200) {
               removeListFromScreen(Priceid);
@@ -206,14 +189,11 @@
       async function getList() {
         try {
           const response = await axios.get(
-            "https://crudcrud.com/api/00c88f17d720473fa1b5a848cb67468b/Price"
+            "https://crudcrud.com/api/46458f4ee2644472b0c4a7c6c21e1ef0/Price"
           );
           console.log(response);
           if (response.status === 200) {
            
-            // table1List.innerHTML = "";
-            // table2List.innerHTML = "";
-            // table3List.innerHTML = "";
             resetForm();
             response.data.forEach((Price) => {
               displayListOnScreen(Price);

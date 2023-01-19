@@ -53,9 +53,33 @@
       let SellingPrice = document.getElementById("SellingPrice");
       let ProductName = document.getElementById("ProductName");
       let usersList = document.getElementById("users");
-      let totalValue =0 ;
+      let editId =0;
 
       async function saveData(e) {
+        e.preventDefault();
+        if(editId){
+        try {
+        let newPrice = e.target.SellingPrice.value;
+        let newProductname =e.target.ProductName.value;
+        const obj = {
+          SPrice:newPrice,
+          Pname:newProductname,
+          };
+          const response = await axios.put(
+            `https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice/${editId}`, 
+           obj
+          );
+          if (response.status === 200) {
+         editListFromScreen(editId, newProductname, newPrice);
+         updateTotalValue()
+          } else {
+            throw new Error("Failed to delete");
+          }
+        } catch (error) {
+            showError(error);
+        }
+        }
+        else{
         try {
           e.preventDefault();
           const SPrice = e.target.SellingPrice.value;
@@ -69,7 +93,7 @@
             Pname,
           };
           const response = await axios.post(
-            "https://crudcrud.com/api/10d404592d5f4e4999d97a3cf243d603/SPrice",
+            "https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice",
             obj
           );
           if (response.status === 201) {
@@ -82,54 +106,77 @@
           showError(error);
         }
       }
+      editId=0;
+    }
 
     // Display 
       function displayListOnScreen(user) {
         const parentNode = usersList;
       
-        const SPriceElemId = `SPrice-${user._id}`;
-        const childHTML = `<li id=${SPriceElemId} class="list-group-item"> <span class="font-style">${user.SPrice}</span> - <span class="crimson-text">${user.Pname}</span>
-                              <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${user._id}')> Delete </button>
-                              <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${user._id}','${user.Pname}','${user.SPrice}','${user.category}')>Edit</button>
+       // const SPriceElemId = user._id;
+        const childHTML = `<li id=${user._id} class="list-group-item"> <span class="font-style">${user.SPrice}</span> - <span class="crimson-text">${user.Pname}</span>
+                              <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${user._id}','${user.SPrice}')> Delete </button>
+                              <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${user._id}','${user.Pname}','${user.SPrice}')>Edit</button>
                            </li>`;
 
         parentNode.innerHTML = parentNode.innerHTML + childHTML;
 
-        totalValue += parseInt(user.SPrice);
-        var productList = document.getElementById("Totalvalue");
-        productList.innerHTML = `<p>${totalValue}</p>`;
-         console.log(totalValue);
+       // total of all products value 
+       updateTotalValue()
+        // totalValue += parseInt(user.SPrice);
+        // let productList = document.getElementById("Totalvalue");
+        // productList.innerHTML = `<p>${totalValue}</p>`;
+        //  console.log(totalValue); 
       }
 
-      //Edit
-
-      async function editList(SPriceid, Pname, SPrice, category) {
-        try {
-          SellingPrice.value = SPrice;
-          ProductName.value = Pname;
-          
-          const response = await axios.delete(
-            `https://crudcrud.com/api/10d404592d5f4e4999d97a3cf243d603/SPrice/${SPriceid}`
-          );
-          if (response.status === 200) {
-            removeListFromScreen(SPriceid);
-          } else {
-            throw new Error("Failed to delete");
+      async function updateTotalValue(){
+      let totalValue =0 ; // total of all products value
+      let productList = document.getElementById("Totalvalue");
+        try{
+          const response = await axios.get(
+            "https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice"
+          )
+          if(response.status == 200){
+            let listData = response.data
+            listData.forEach(data => {
+              totalValue += parseInt(data.SPrice);
+            })
+            productList.innerHTML = `<p>${totalValue}</p>`;
           }
-        } catch (error) {
+        }catch (error) {
           showError(error);
         }
       }
 
+      //Edit
+      
+      async function editList(SPriceid, Pname, SPrice) {
+        SellingPrice.value = SPrice;
+        ProductName.value = Pname;
+        editId =SPriceid;
+      }
+      
+       function editListFromScreen(SPriceid, Pname, SPrice){
+        let li=document.getElementById(SPriceid)
+        li.innerHTML = `<span class="font-style">${SPrice}</span> - <span class="crimson-text">${Pname}</span>
+                              <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${SPriceid}','${SPrice}')> Delete </button>
+                              <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${SPriceid}','${Pname}','${SPrice}')>Edit</button>`
+       }
+
+
       // Delete
-      async function deleteList(SPriceid) {
+      async function deleteList(SPriceid, Price) {
         try {
           if (confirm("Are you sure to delete this record ?")) {
             const response = await axios.delete(
-              `https://crudcrud.com/api/10d404592d5f4e4999d97a3cf243d603/SPrice/${SPriceid}`
+              `https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice/${SPriceid}`
             );
             if (response.status === 200) {
               removeListFromScreen(SPriceid);
+        // totalValue = totalValue - parseInt(Price);
+        // let productList = document.getElementById("Totalvalue");
+        // productList.innerHTML = `<p>${totalValue}</p>`;
+        //  console.log(totalValue);
             } else {
               throw new Error("Failed to delete");
             }
@@ -139,6 +186,9 @@
         } catch (error) {
           showError(error);
         }
+        // total of Product value After subtraction
+        
+       // console.log(Price);
       }
 
       function showError(err) {
@@ -159,7 +209,7 @@
       async function getList() {
         try {
           const response = await axios.get(
-            "https://crudcrud.com/api/10d404592d5f4e4999d97a3cf243d603/SPrice"
+            "https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice"
           );
           if (response.status === 200) {
             usersList.innerHTML = "";
