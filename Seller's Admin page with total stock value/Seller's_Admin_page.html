@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seller's Admin page with total stock value</title>
+  </head>
+  <body>
+    <table class="table">
+          <form onsubmit="saveData(event);">
+            <h1>Seller's Admin page with total stock value</h1>
+            <br />
+            <div class="form-group">
+              <label>Selling Price</label>
+              <input
+                type="text"
+                name="SellingPrice"
+                id="SellingPrice"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label>Product Name</label>
+              <input
+                type="text"
+                name="ProductName"
+                id="ProductName"
+                maxlength="30"
+                class="form-control"
+              />
+            </div>
+          
+            <div class="form-action-buttons">
+              <input type="submit" value="Add Product" class="btn btn-info" />
+            </div>
+          </form>
+
+        </br>
+          <h1>Products</h1>
+          <p id="displayError" class="validation-error"></p>
+          <ul id="users" class="list-group"></ul>
+        
+        </br>
+     </table>
+        <h2>Total Value Worth of Products: Rs. </h2>
+        <span id="Totalvalue" class= "list-group"></span>
+
+    <script>
+   
+      window.addEventListener("DOMContentLoaded", getList);
+
+      let SellingPrice = document.getElementById("SellingPrice");
+      let ProductName = document.getElementById("ProductName");
+      let usersList = document.getElementById("users");
+      let editId =0;
+
+      async function saveData(e) {
+        e.preventDefault();
+        if(editId){
+        try {
+        let newPrice = e.target.SellingPrice.value;
+        let newProductname =e.target.ProductName.value;
+        const obj = {
+          SPrice:newPrice,
+          Pname:newProductname,
+          };
+          const response = await axios.put(
+            `https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice/${editId}`, 
+           obj
+          );
+          if (response.status === 200) {
+         editListFromScreen(editId, newProductname, newPrice);
+         updateTotalValue()
+          } else {
+            throw new Error("Failed to delete");
+          }
+        } catch (error) {
+            showError(error);
+        }
+        }
+        else{
+        try {
+          e.preventDefault();
+          const SPrice = e.target.SellingPrice.value;
+          const Pname = e.target.ProductName.value;
+        
+          if (SPrice == "" || Pname == "")
+            throw "Input field must not be empty";
+          if (isNaN(SPrice)) throw "SPrice field must be a number";
+          const obj = {
+            SPrice,
+            Pname,
+          };
+          const response = await axios.post(
+            "https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice",
+            obj
+          );
+          if (response.status === 201) {
+            displayListOnScreen(response.data);
+            resetForm();
+          } else {
+            throw new Error("Failed To create new SPrice");
+          }
+        } catch (error) {
+          showError(error);
+        }
+      }
+      editId=0;
+    }
+
+    // Display 
+      function displayListOnScreen(user) {
+        const parentNode = usersList;
+    
+        const childHTML = `<li id=${user._id} class="list-group-item"> <span class="font-style">${user.SPrice}</span> - <span class="crimson-text">${user.Pname}</span>
+                              <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${user._id}','${user.SPrice}')> Delete </button>
+                              <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${user._id}','${user.Pname}','${user.SPrice}')>Edit</button>
+                           </li>`;
+
+        parentNode.innerHTML = parentNode.innerHTML + childHTML;
+
+       // total of all products value 
+       updateTotalValue() 
+      }
+
+      async function updateTotalValue(){
+      let totalValue =0 ; // total of all products value
+      let productList = document.getElementById("Totalvalue");
+        try{
+          const response = await axios.get(
+            "https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice"
+          )
+          if(response.status == 200){
+            let listData = response.data
+            listData.forEach(data => {
+              totalValue += parseInt(data.SPrice);
+            })
+            productList.innerHTML = `<p>${totalValue}</p>`;
+          }
+        }catch (error) {
+          showError(error);
+        }
+      }
+
+      //Edit
+      
+      async function editList(SPriceid, Pname, SPrice) {
+        SellingPrice.value = SPrice;
+        ProductName.value = Pname;
+        editId =SPriceid;
+      }
+      
+       function editListFromScreen(SPriceid, Pname, SPrice){
+        let li=document.getElementById(SPriceid)
+        li.innerHTML = `<span class="font-style">${SPrice}</span> - <span class="crimson-text">${Pname}</span>
+                              <button type="button" id="btn1" class="btn btn-danger btn-xs" onclick=deleteList('${SPriceid}','${SPrice}')> Delete </button>
+                              <button type="button" id="btn2" class="btn btn-primary btn-xs" onclick=editList('${SPriceid}','${Pname}','${SPrice}')>Edit</button>`
+       }
+
+
+      // Delete
+      async function deleteList(SPriceid, Price) {
+        try {
+          if (confirm("Are you sure to delete this record ?")) {
+            const response = await axios.delete(
+              `https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice/${SPriceid}`
+            );
+            if (response.status === 200) {
+              removeListFromScreen(SPriceid);
+        
+            } else {
+              throw new Error("Failed to delete");
+            }
+          } else {
+            throw new Error("Error");
+          }
+        } catch (error) {
+          showError(error);
+        }
+      }
+
+      function showError(err) {
+        document.getElementById("displayError").innerHTML = err;
+      }
+
+      function removeListFromScreen(SPriceid) {
+        const SPriceElemId = `SPrice-${SPriceid}`;
+        document.getElementById(SPriceElemId).remove();
+      }
+
+      function resetForm() {
+        SellingPrice.value = "";
+        ProductName.value = "";
+        SellingPrice.focus();
+      }
+
+      async function getList() {
+        try {
+          const response = await axios.get(
+            "https://crudcrud.com/api/9b04c4f9e90d40bea4a51d2e80b42307/SPrice"
+          );
+          if (response.status === 200) {
+            usersList.innerHTML = "";
+            resetForm();
+            response.data.forEach((SPrice) => {
+              displayListOnScreen(SPrice);
+            });
+          } else {
+            throw new Error("Oops! something went wrong");
+          }
+        } catch (error) {
+          showError(error);
+        }
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+  </body>
+</html>
